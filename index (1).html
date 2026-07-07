@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  SénégalResto — Page d'accueil
+  ----------------------------------------------------------------------------
+  Reconstruction organisée et commentée à partir du HTML rendu (build final).
+  Stack détectée dans le code source d'origine :
+    - React 18 (hydratation, marqueurs <!--$--> / <!--/$-->)
+    - TanStack Router / TanStack Start (SSR + streaming, objet $_TSR)
+    - Vite (fichiers "assets/index-<hash>.js/.css")
+    - Tailwind CSS (classes utilitaires + palette personnalisée "sable" / "terracotta")
+    - Leaflet.js (carte interactive, probablement sur les fiches restaurant)
+    - Google Fonts : Inter
+  ============================================================================
+-->
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>SénégalResto — Trouvez les meilleurs restaurants au Sénégal</title>
+  <meta name="description" content="Recherchez, découvrez et réservez dans les meilleurs restaurants à travers tout le Sénégal." />
+
+  <!-- Polices -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
+
+  <!-- Carte interactive (Leaflet) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+
+  <!--
+    Tailwind CDN + configuration de la palette personnalisée du projet.
+    En production, ceci correspond au fichier tailwind.config.js compilé
+    dans /assets/index-DfrIIBh9.css par Vite.
+  -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sable:      { 50:'#fbf8f3', 100:'#f5eee1', 200:'#e9dcc3', 300:'#d9c19a', 500:'#b8905a', 700:'#8a6a3f' },
+            terracotta: { 50:'#fdf3ef', 100:'#fbe3d8', 400:'#e08a5f', 500:'#d97444', 600:'#c25e30', 700:'#9c4a26' },
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    .hero-gradient { background: linear-gradient(135deg, #c25e30 0%, #9c4a26 100%); }
+    .card-hover { transition: transform .2s ease, box-shadow .2s ease; }
+    .card-hover:hover { transform: translateY(-2px); }
+  </style>
+</head>
+
+<body class="bg-sable-50 min-h-screen">
+
+  <!-- ======================= NAVIGATION ======================= -->
+  <header>
+    <nav class="bg-white shadow-sm border-b border-sable-200 sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+
+          <a href="/" class="flex items-center gap-2" aria-current="page">
+            <span class="text-2xl">🍽️</span>
+            <span class="font-bold text-xl text-terracotta-700">SénégalResto</span>
+          </a>
+
+          <div class="flex items-center gap-6">
+            <a href="/" class="text-gray-600 hover:text-terracotta-600 font-medium transition-colors text-sm" aria-current="page">Accueil</a>
+            <a href="/restaurants" class="text-gray-600 hover:text-terracotta-600 font-medium transition-colors text-sm">Restaurants</a>
+            <a href="/restaurants" class="bg-terracotta-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-terracotta-700 transition-colors">Explorer</a>
+          </div>
+
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ======================= HERO / RECHERCHE ======================= -->
+    <section class="hero-gradient text-white relative overflow-hidden">
+      <div class="absolute inset-0 opacity-10 pointer-events-none select-none" aria-hidden="true">
+        <div class="absolute top-10 left-10 text-8xl">🌴</div>
+        <div class="absolute top-20 right-20 text-6xl">🍽️</div>
+        <div class="absolute bottom-10 left-1/3 text-5xl">🐟</div>
+        <div class="absolute top-1/2 right-10 text-7xl">🥘</div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 py-24 relative z-10">
+        <div class="text-center max-w-3xl mx-auto">
+
+          <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur rounded-full px-4 py-1.5 text-sm mb-6">
+            <span>🇸🇳</span><span>Découvrez la cuisine sénégalaise</span>
+          </div>
+
+          <h1 class="text-5xl md:text-6xl font-bold leading-tight mb-6">
+            Les meilleurs restaurants du<span class="block text-sable-300">Sénégal</span>
+          </h1>
+
+          <p class="text-xl text-white/80 mb-10">
+            Recherchez, découvrez et réservez dans des centaines de restaurants à travers tout le Sénégal.
+          </p>
+
+          <form class="flex gap-3 max-w-2xl mx-auto" role="search">
+            <div class="flex-1 relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg" aria-hidden="true">🔍</span>
+              <label for="search" class="sr-only">Rechercher un restaurant</label>
+              <input
+                id="search"
+                type="text"
+                placeholder="Restaurant, ville, type de cuisine..."
+                class="w-full pl-11 pr-4 py-4 rounded-2xl text-gray-900 text-base shadow-xl focus:outline-none focus:ring-2 focus:ring-terracotta-400"
+              />
+            </div>
+            <button type="submit" class="bg-terracotta-500 hover:bg-terracotta-600 text-white px-8 py-4 rounded-2xl font-semibold text-base shadow-xl transition-colors whitespace-nowrap">
+              Rechercher
+            </button>
+          </form>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= FILTRE PAR VILLE ======================= -->
+    <nav aria-label="Filtrer par ville" class="bg-white border-b border-sable-200 py-4">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="flex gap-2 overflow-x-auto pb-1">
+          <a href="/restaurants" class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-terracotta-600 text-white">Toutes les villes</a>
+          <a href="/restaurants?city=Dakar" class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-sable-100 text-gray-700 hover:bg-terracotta-100 hover:text-terracotta-700 transition-colors">📍 Dakar</a>
+          <a href="/restaurants?city=Saint-Louis" class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-sable-100 text-gray-700 hover:bg-terracotta-100 hover:text-terracotta-700 transition-colors">📍 Saint-Louis</a>
+          <a href="/restaurants?city=Ziguinchor" class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-sable-100 text-gray-700 hover:bg-terracotta-100 hover:text-terracotta-700 transition-colors">📍 Ziguinchor</a>
+          <a href="/restaurants?city=Kaolack" class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-sable-100 text-gray-700 hover:bg-terracotta-100 hover:text-terracotta-700 transition-colors">📍 Kaolack</a>
+          <a href="/restaurants?city=Thi%C3%A8s" class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-sable-100 text-gray-700 hover:bg-terracotta-100 hover:text-terracotta-700 transition-colors">📍 Thiès</a>
+          <a href="/restaurants?city=Touba" class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-sable-100 text-gray-700 hover:bg-terracotta-100 hover:text-terracotta-700 transition-colors">📍 Touba</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ======================= CATÉGORIES DE CUISINE ======================= -->
+    <section class="max-w-7xl mx-auto px-4 py-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Explorer par type de cuisine</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+        <a href="/restaurants?cuisine=senegalais" class="flex flex-col items-center gap-2 p-4 bg-white rounded-2xl border border-sable-200 hover:border-terracotta-300 hover:bg-terracotta-50 transition-all group text-center card-hover">
+          <span class="text-4xl group-hover:scale-110 transition-transform">🍛</span>
+          <span class="text-sm font-medium text-gray-700 group-hover:text-terracotta-700">Sénégalaise</span>
+        </a>
+        <a href="/restaurants?cuisine=fruits-de-mer" class="flex flex-col items-center gap-2 p-4 bg-white rounded-2xl border border-sable-200 hover:border-terracotta-300 hover:bg-terracotta-50 transition-all group text-center card-hover">
+          <span class="text-4xl group-hover:scale-110 transition-transform">🦐</span>
+          <span class="text-sm font-medium text-gray-700 group-hover:text-terracotta-700">Fruits de mer</span>
+        </a>
+        <a href="/restaurants?cuisine=casamancais" class="flex flex-col items-center gap-2 p-4 bg-white rounded-2xl border border-sable-200 hover:border-terracotta-300 hover:bg-terracotta-50 transition-all group text-center card-hover">
+          <span class="text-4xl group-hover:scale-110 transition-transform">🌿</span>
+          <span class="text-sm font-medium text-gray-700 group-hover:text-terracotta-700">Casamançaise</span>
+        </a>
+        <a href="/restaurants?cuisine=international" class="flex flex-col items-center gap-2 p-4 bg-white rounded-2xl border border-sable-200 hover:border-terracotta-300 hover:bg-terracotta-50 transition-all group text-center card-hover">
+          <span class="text-4xl group-hover:scale-110 transition-transform">🍕</span>
+          <span class="text-sm font-medium text-gray-700 group-hover:text-terracotta-700">Internationale</span>
+        </a>
+        <a href="/restaurants?cuisine=fusion" class="flex flex-col items-center gap-2 p-4 bg-white rounded-2xl border border-sable-200 hover:border-terracotta-300 hover:bg-terracotta-50 transition-all group text-center card-hover">
+          <span class="text-4xl group-hover:scale-110 transition-transform">🌟</span>
+          <span class="text-sm font-medium text-gray-700 group-hover:text-terracotta-700">Fusion</span>
+        </a>
+        <a href="/restaurants?cuisine=orientale" class="flex flex-col items-center gap-2 p-4 bg-white rounded-2xl border border-sable-200 hover:border-terracotta-300 hover:bg-terracotta-50 transition-all group text-center card-hover">
+          <span class="text-4xl group-hover:scale-110 transition-transform">🧆</span>
+          <span class="text-sm font-medium text-gray-700 group-hover:text-terracotta-700">Orientale</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ======================= RESTAURANTS POPULAIRES ======================= -->
+    <!--
+      Dans le code d'origine, cette section affiche des "skeletons" (squelettes
+      de chargement) : les données des restaurants sont donc chargées côté
+      client après l'hydratation React (fetch asynchrone), pas au moment du SSR.
+      Composants associés préchargés : RestaurantCard, StarRating.
+    -->
+    <section class="max-w-7xl mx-auto px-4 pb-12">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-900">Restaurants populaires</h2>
+        <a href="/restaurants" class="text-terracotta-600 font-medium hover:underline text-sm">Voir tous →</a>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" aria-busy="true" aria-label="Chargement des restaurants">
+        <!-- Répété 6 fois côté source d'origine — extrait en template pour éviter la duplication -->
+        <template id="restaurant-card-skeleton">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-md animate-pulse">
+            <div class="h-48 bg-gray-200"></div>
+            <div class="p-4 space-y-3">
+              <div class="h-5 bg-gray-200 rounded w-3/4"></div>
+              <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+              <div class="h-4 bg-gray-200 rounded"></div>
+            </div>
+          </div>
+        </template>
+        <div id="restaurant-cards"><!-- injecté en JS à partir du template ci-dessus --></div>
+      </div>
+    </section>
+
+    <!-- ======================= STATISTIQUES ======================= -->
+    <section class="bg-terracotta-700 text-white py-12">
+      <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div><div class="text-4xl font-bold text-sable-300">10+</div><div class="text-white/80 mt-1">Restaurants listés</div></div>
+        <div><div class="text-4xl font-bold text-sable-300">6</div><div class="text-white/80 mt-1">Villes couvertes</div></div>
+        <div><div class="text-4xl font-bold text-sable-300">6</div><div class="text-white/80 mt-1">Types de cuisine</div></div>
+        <div><div class="text-4xl font-bold text-sable-300">🇸🇳</div><div class="text-white/80 mt-1">100% Sénégal</div></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================= PIED DE PAGE ======================= -->
+  <footer class="bg-gray-900 text-gray-300 mt-16">
+    <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+
+      <div>
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-2xl">🍽️</span>
+          <span class="font-bold text-xl text-white">SénégalResto</span>
+        </div>
+        <p class="text-sm text-gray-400">La plateforme de référence pour trouver les meilleurs restaurants à travers tout le Sénégal.</p>
+      </div>
+
+      <div>
+        <h3 class="font-semibold text-white mb-3">Villes</h3>
+        <ul class="space-y-1 text-sm">
+          <li><a href="/restaurants?city=Dakar" class="hover:text-terracotta-400 transition-colors">Dakar</a></li>
+          <li><a href="/restaurants?city=Saint-Louis" class="hover:text-terracotta-400 transition-colors">Saint-Louis</a></li>
+          <li><a href="/restaurants?city=Ziguinchor" class="hover:text-terracotta-400 transition-colors">Ziguinchor</a></li>
+          <li><a href="/restaurants?city=Kaolack" class="hover:text-terracotta-400 transition-colors">Kaolack</a></li>
+          <li><a href="/restaurants?city=Thi%C3%A8s" class="hover:text-terracotta-400 transition-colors">Thiès</a></li>
+          <li><a href="/restaurants?city=Touba" class="hover:text-terracotta-400 transition-colors">Touba</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="font-semibold text-white mb-3">Cuisines</h3>
+        <ul class="space-y-1 text-sm">
+          <li><a href="/restaurants?cuisine=senegalais" class="hover:text-terracotta-400 transition-colors">Sénégalaise</a></li>
+          <li><a href="/restaurants?cuisine=fruits-de-mer" class="hover:text-terracotta-400 transition-colors">Fruits de mer</a></li>
+          <li><a href="/restaurants?cuisine=casamancais" class="hover:text-terracotta-400 transition-colors">Casamançaise</a></li>
+          <li><a href="/restaurants?cuisine=international" class="hover:text-terracotta-400 transition-colors">Internationale</a></li>
+          <li><a href="/restaurants?cuisine=fusion" class="hover:text-terracotta-400 transition-colors">Fusion</a></li>
+        </ul>
+      </div>
+
+    </div>
+    <div class="border-t border-gray-800 text-center py-4 text-xs text-gray-500">© 2026 SénégalResto. Tous droits réservés. 🇸🇳</div>
+  </footer>
+
+  <!--
+    ============================================================================
+    Script client
+    ----------------------------------------------------------------------------
+    Le fichier d'origine mélangeait :
+      1. La restauration du scroll propre à TanStack Router (tsr-scroll-restoration)
+      2. Le manifeste interne du routeur ($_TSR / $R) utilisé pour l'hydratation SSR
+    Ces deux responsabilités sont ici séparées et commentées, et le remplissage
+    des cartes restaurants (précédemment un état de chargement figé) est simulé
+    proprement en JS plutôt que dupliqué 6 fois dans le HTML.
+    ============================================================================
+  -->
+  <script>
+    // 1) Génère les 6 cartes de chargement à partir du <template> unique
+    const skeleton = document.getElementById('restaurant-card-skeleton');
+    const container = document.getElementById('restaurant-cards');
+    const grid = container.parentElement;
+    for (let i = 0; i < 6; i++) {
+      grid.insertBefore(skeleton.content.cloneNode(true), container);
+    }
+    container.remove();
+
+    // 2) Restauration de scroll (comportement identique à l'original, isolé et lisible)
+    (function restoreScrollPosition(options) {
+      let savedPositions;
+      try {
+        savedPositions = JSON.parse(sessionStorage.getItem(options.storageKey) || '{}');
+      } catch (err) {
+        console.error('Scroll restoration: lecture sessionStorage impossible', err);
+        return;
+      }
+
+      const key = options.key || window.history.state?.__TSR_key;
+      const entry = key ? savedPositions[key] : undefined;
+
+      if (options.shouldScrollRestoration && entry && typeof entry === 'object') {
+        for (const selector in entry) {
+          const pos = entry[selector];
+          if (!pos || !Number.isFinite(pos.scrollX) || !Number.isFinite(pos.scrollY)) continue;
+          if (selector === 'window') {
+            window.scrollTo({ top: pos.scrollY, left: pos.scrollX, behavior: options.behavior });
+          } else {
+            const el = document.querySelector(selector);
+            if (el) { el.scrollLeft = pos.scrollX; el.scrollTop = pos.scrollY; }
+          }
+        }
+        return;
+      }
+
+      window.scrollTo({ top: 0, left: 0, behavior: options.behavior });
+    })({
+      storageKey: 'tsr-scroll-restoration-v1_3',
+      shouldScrollRestoration: true,
+    });
+  </script>
+
+</body>
+</html>
